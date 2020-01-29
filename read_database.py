@@ -96,14 +96,13 @@ def plot_province(provincelst, countkeyword, alldict, deltaT=60*60*24):
     tAlst = [ti for ti in tAlst]
     tBlst = [ti for ti in tBlst]
     ########################
-    tnow = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(tBlst[-1])))
     fig = plt.figure()
-    plt.title('全国 -- 截止至' + tnow + '\n 时间零点:' \
-            +str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r2d.t0))))
+    tnowlst = []
     for pi in provincelst:
         tlst1bj, count1bj, tlst2bj, count2bj = r2d.province_evolution(pi, 
                 countkeyword, alldict, tAlst, tBlst)
         ########
+        tnowlst.append(tlst1bj[-1])
         tlst1bj = [(ti-r2d.t0)/3600/24 for ti in tlst1bj]
         tlst2bj = [(ti-r2d.t0)/3600/24 for ti in tlst2bj]
         ########################
@@ -112,6 +111,9 @@ def plot_province(provincelst, countkeyword, alldict, deltaT=60*60*24):
         autolabel2(tlst2bj, count2bj)
         plt.rcParams['font.sans-serif']=['SimHei']
     ########
+    tnow = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(max(tnowlst))))
+    plt.title('全国 -- 截止至' + tnow + '\n 时间零点:' \
+            +str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r2d.t0))))
     plt.ylabel('总确诊人数')
     plt.legend()
     return fig
@@ -124,8 +126,8 @@ def plot_china(provincelst, countkeyword, alldict):
     tAlst = [ti for ti in tAlst]
     tBlst = [ti for ti in tBlst]
     ########################
-    tlstC, countC = r2d.nationalevolution(provincelst, countkeyword, alldict, tAlst, tBlst)
-    tnow = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(tlstC[-1])))
+    tlstC, countC, tend = r2d.nationalevolution(provincelst, countkeyword, alldict, tAlst, tBlst)
+    tnow = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(tend)))
     ########
     tlstC = [(ti-r2d.t0)/3600/24 for ti in tlstC]
     deltaCount = np.array(countC[1:]) - np.array(countC[:-1])
@@ -152,10 +154,12 @@ def plot_provincesort(provincelst, countkeyword, listdict):
     tBlst = [ti for ti in tBlst]
     ######## 得到最新数据
     updatalst = []
+    tendlst = []
     for pi in provincelst:
         tlst1, count1, tlst2, count2 \
                 = r2d.province_evolution(pi, countkeyword, listdict, tAlst, tBlst)
         updatalst.append((pi, count2[-1]))
+        tendlst.append(tlst1[-1])
     ######## 整理数据
     sortupdatalst = sorted(updatalst, key=lambda item:item[1], reverse=True)
     count = []
@@ -167,7 +171,7 @@ def plot_provincesort(provincelst, countkeyword, listdict):
     print(province)
     print(count)
     ######################## PLOT
-    tnow = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(tBlst[-1])))
+    tnow = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(max(tendlst))))
     fig = plt.figure(figsize=(13,5))
     plt.subplots_adjust(left=0.07, right=0.98)
     plt.title('全国 -- 截止至' + tnow + '\n 时间零点:' \
@@ -242,8 +246,8 @@ ff = open(os.path.join(filepath, 'allprovince.txt'), 'r')
 allprovince = [i1.replace('\n', '') for i1 in ff]
 ff.close()
 ########################
-#alldict = dataNorm(os.path.join(path0, 'git_worm/savedata.txt'))
-alldict = dataNorm('savedata.txt')
+alldict = dataNorm(os.path.join(filepath, 'savedata.txt'))
+#alldict = dataNorm('savedata.txt')
 print('#'*50)
 print('#'*50)
 print('#'*50)

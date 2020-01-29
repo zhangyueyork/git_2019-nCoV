@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3.7
 #!coding=utf-8
 # 分析2019-nCoV感染人数数据
 import re
