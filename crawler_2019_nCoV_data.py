@@ -1,4 +1,4 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 #!coding=utf-8
 # 分析2019-nCoV感染人数数据
 import re
@@ -63,8 +63,10 @@ def request_content(url,contentpattern):
         print(e.reason)
     ########
     try:
+        print('try2')
         content = response.read().decode('utf-8')
     except http.client.IncompleteRead as e:
+        print('except3')
         content = e.partial.decode('utf-8', 'ignore')
     ########
     pattern=re.compile(contentpattern,re.S)
@@ -85,12 +87,12 @@ def newDXYweb(url):
     time_stamp = request_content(url, pattern_time)
     if len(time_stamp) > 0:
         time_stamp = time_stamp[0].replace(' ', '_').replace(':', '_')
-        time_stampre = re.search('截至_(.*?)_数据统计', 
+        time_stampre = re.search('截至_(.*?)_全?国?数据统计', 
                 re.sub('[（）]', '_', time_stamp))
         if time_stampre:
             time_stamp = time_stampre.group(1)
     else:
-        time_stamp = 'searchtime-'+str(time())
+        time_stamp = 'searchtime-'+str(time()) + '-'+str(asctime(localtime(time())))
     print('newdata---', time_stamp)
     ######################## 各省数据
     # 各省数据
@@ -115,6 +117,3 @@ if __name__ == '__main__':
     newdatadict = newDXYweb(url)
     ######## 保存数据
     savedatalst('savedata.txt', newdatadict)
-    #ff = open('savedata.txt', 'a')
-    #print(str({time():1}), file=ff)
-    #ff.close()
