@@ -27,6 +27,7 @@ def readindatalst(filename):
         print('saveddata---', dicti.keys())
         for keyi in dicti.keys():
             timekeylst.append(keyi)
+    print(len(lst))
     return lst, timekeylst
    #^^^^^^^END
 
@@ -36,9 +37,16 @@ def savedatalst(filename, newdatadict):
     olddata, oldtimekey = readindatalst(filename)
     for keyi in newdatadict:
         newtimekey = keyi
+        datacontent = str(newdatadict[keyi][0])
+    ######## 生成唯一化的数据
+    dlst2 = []
+    for i1 in olddata:
+        dlst2.append(str(list(i1.values())[0][0]))
+    dlstin1 = list(set(dlst2))
     ########
     print('#'*50)
-    if newtimekey not in oldtimekey:
+    if newtimekey not in oldtimekey \
+            and datacontent not in dlstin1:
         ff = open(filename, 'a', encoding='utf-8')
         print(newdatadict, file=ff)
         ff.close()
